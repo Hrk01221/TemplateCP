@@ -54,6 +54,15 @@ struct Hashing {
     ans.second = (hs[r].second - hs[l - 1].second + MOD2) * 1LL * ipw[l - 1].second % MOD2;
     return ans;
   }
+  pair<int,int>merge_hash(int l1,int r1,int l2,int r2){
+        auto p1 = get_hash(l1,r1);
+        auto p2 = get_hash(l2,r2);
+        int len = r1-l1+1;
+        pair<int,int>ans;
+        ans.first = {(p1.first + (p2.first*pw[len].first) % MOD1) %  MOD1};
+        ans.second = {(p1.second + (p2.second*pw[len].second) % MOD2) % MOD2};
+        return ans;
+  }
   pair<int, int> get_hash() {
     return get_hash(1, n);
   }
