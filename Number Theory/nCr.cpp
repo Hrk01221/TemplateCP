@@ -23,6 +23,7 @@ int nCr_mod(int n, int r) {
 // for small r
 int nCr_multiplicative(int n, int r) {
     if (r < 0 || r > n) return 0;
+    r = min(r,n-r);
     int ans = 1;
     for (int i = 1; i <= r; i++) {
         ans = ans * (n - i + 1) % MOD;
