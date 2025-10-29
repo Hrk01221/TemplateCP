@@ -4,6 +4,7 @@ using namespace std;
 
 #ifndef ONLINE_JUDGE
 
+string extra;
 template <typename T>
 void _print(const T &x);
 
@@ -55,7 +56,7 @@ void _print_container(const T &container, const string &open = "[", const string
     bool first = true;
     for (const auto &x : container) {
         if (!first and type != 2) cerr << ", ";
-        if(type == 2 and !first)cerr << "\t ";
+        if(type == 2 and !first)cerr << extra;
         _print(x);
         if(type==2)cerr << '\n';
         first = false;
@@ -95,6 +96,8 @@ template <size_t N> void _print(const bitset<N> &b) { cerr << b.to_string(); }
 template <typename T>
 void _debug_one(const string &name, const T &value) {
     cerr << name << " = ";
+    extra = "";
+    for(int i=0;i<name.size() + 3;i++)extra += " ";
     _print(value);
     cerr << "\n";
 }
