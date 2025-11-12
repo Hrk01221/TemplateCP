@@ -1,10 +1,10 @@
 const int SZ = 26;
 char INIT = 'a';
+struct Node {
+    int wordCnt = 0, cnt = 0;
+    Node* next[SZ] = {};
+};
 struct Trie { //init->Trie T
-    struct Node {
-        int wordCnt = 0, cnt = 0;
-        Node* next[SZ] = {};
-    };
     Node* root;
     Trie(){root = new Node();}
     void insert(const string &s) {
