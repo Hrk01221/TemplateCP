@@ -1,13 +1,12 @@
-multiset<int>* ms[N];
-void dfs(int u, int p) {
-    ms[u] = new multiset<int>();
-    ms[u]->insert(value[u]);
-    for (int v : g[u]) if (v != p) {
-        dfs(v, u);
-        if (ms[v]->size() > ms[u]->size())
-            swap(ms[u], ms[v]);
-        for (int x : *ms[v])
-            ms[u]->insert(x);
+multiset<int>dfs(int v,int p){
+    multiset<int>s;
+    s.insert(value[v]);
+    for(auto u : tree[v]){
+        if(u==p) continue;
+        auto t = dfs(u,v);
+        if(t.size() > s.size())
+            swap(s,t);
+        for(auto i : t)s.insert(i);
     }
-    ans[u] = *ms[u]->rbegin();
+    ans[v] = *s.rbegin();
 }
