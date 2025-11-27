@@ -1,58 +1,51 @@
-struct node {
-    node *l, *r;
-    int val;
-    node(int v = 0) : l(nullptr), r(nullptr), val(v) {}
-};
-node *root[N];
-struct PersistentSegTree {
-    int n;
-    PersistentSegTree(int _n):n(_n){
-        root[0] = build(1,n);//version 0
+const int MaxN = 2e5 + 1;
+vector<int>root(MaxN);
+struct PST {
+#define lc t[cur].l
+#define rc t[cur].r
+    struct node {
+        int l = 0, r = 0, val = 0;
+        node(int _l = 0, int _r = 0, int _val = 0): l(_l), r(_r), val(_val) {}
+    } t[22 * MaxN];
+    int T = 0;
+    int build(int b, int e) {
+        int cur = ++T;
+        if (b == e) return cur;
+        int mid = (b + e) >> 1;
+        lc = build(b, mid);
+        rc = build(mid + 1, e);
+        t[cur].val = t[lc].val + t[rc].val;
+        return cur;
     }
-    int merge(int a, int b) {return a + b;}
-    node* build(int lo, int hi) {//init with empty array
-        if (lo == hi)return new node();
-        int mid = (lo + hi) >> 1;
-        node *curr = new node();
-        curr->l = build(lo, mid);
-        curr->r = build(mid + 1, hi);
-        curr->val = merge(curr->l->val , curr->r->val);
-        return curr;
-    }
-    //update the version accordingly
-    void update(int version,int idx,int val){
-        root[version] = update(root[version-1],1,n,idx,val);
-    }
-    //update and return the new tree
-    node* update(node* prev, int lo, int hi, int idx, int val) {
-        if (lo == hi)return new node(prev->val + val);
-        int mid = (lo + hi) >> 1;
-        node* curr = new node();
-        if (idx <= mid) {
-            curr->l = update(prev->l, lo, mid, idx, val);
-            curr->r = prev->r;
+    int update(int pre, int b, int e, int i, int v) {
+        int cur = ++T;
+        t[cur] = t[pre];
+        if (b == e) {
+            t[cur].val += v;
+            return cur;
         }
-        else {
-            curr->l = prev->l;
-            curr->r = update(prev->r, mid + 1, hi, idx, val);
+        int mid = b + e >> 1;
+        if (i <= mid) {
+            rc = t[pre].r;
+            lc = update(t[pre].l, b, mid, i, v);
+        } else {
+            lc = t[pre].l;
+            rc = update(t[pre].r, mid + 1, e, i, v);
         }
-        curr->val = merge(curr->l->val, curr->r->val);
-        return curr;
+        t[cur].val = t[lc].val + t[rc].val;
+        return cur;
     }
-    int query(node *curr,int lo,int hi,int l,int r){
-        if(r < lo or hi < l)return 0;
-        if(l<=lo and hi<=r)return curr->val;
-        int mid = (lo + hi)>>1;
-        int left = query(curr->l,lo,mid,l,r);
-        int right = query(curr->r,mid+1,hi,l,r);
-        return merge(left,right);
+    int query(int pre, int b, int e, int l, int r) {
+        if (r < b or e < l)return 0;
+        if (l <= b and e <= r)return t[pre].val;
+        int mid = (b + e) >> 1;
+        int left = query(t[pre].l, b, mid, l, r);
+        int right = query(t[pre].r, mid + 1, e, l, r);
+        return left + right;
     }
-    //return kth number in a range
-    int query(node* prev,node *curr,int lo,int hi,int k){
-        if(lo==hi)return lo;
-        int sum = curr->l->val - prev->l->val;
-        int mid = (lo+hi)>>1;
-        if(k <= sum)return query(prev->l,curr->l,lo,mid,k);
-        else return query(prev->r,curr->r,mid+1,hi,k-sum);
+    void reset(int n) {
+        T = 0;
+        for (int i = 0; i < MaxN; ++i)root[i] = 0;
+        root[0] = build(1, n);
     }
-};
+} t;
