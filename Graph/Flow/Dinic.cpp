@@ -7,7 +7,7 @@ struct Dinic { // O(E log F)
   vector<int> lvl, ptr, q;
   vector<vector<Edge>> adj;
   Dinic(int n) : lvl(n), ptr(n), q(n), adj(n) {}
-  void addEdge(int a, int b, int c, int rcap = 0) {
+  void addEdge(int a, int b, int c, int rcap = 0) { // if graph is bi-directional change rcap to weight
     adj[a].push_back({b, (int)adj[b].size(), c, c});
     adj[b].push_back({a, (int)adj[a].size() - 1, rcap, rcap});
   }
@@ -42,3 +42,4 @@ struct Dinic { // O(E log F)
   // if cut was source -> v and min cut  returns 0
   // if cut was v -> sink and min cut returns 1
 };
+
