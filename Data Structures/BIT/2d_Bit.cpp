@@ -1,45 +1,38 @@
-const int MAXN=1001;
-struct BIT2D{//1 based
-    int tree[4][MAXN][MAXN];
-    BIT2D(){memset(tree,0,sizeof(tree));}
-    void update(int p,int q,int v){
-        if(p<=0||q<=0||p>=MAXN||q>=MAXN) return;
-        int i=p,c=p-1,d=q-1;
-        while(i<MAXN){
-            int j=q;
-            while(j<MAXN){
-                tree[0][i][j]+=v; tree[1][i][j]+=v*d;
-                tree[2][i][j]+=v*c; tree[3][i][j]+=v*c*d;
-                j+=j&-j;
-            }
-            i+=i&-i;
-        }
-    }
-    int query(int p,int q){
-        int i,j,x=0,y=0,z=0,c,d,res;
-        i=p;
-        while(i!=0){
-            j=q; c=d=0;
-            while(j!=0){
-                c+=tree[0][i][j]; d+=tree[1][i][j];
-                y+=tree[2][i][j]; z+=tree[3][i][j];
-                j^=j&-j;
-            }
-            i^=i&-i;
-            x+=c*q-d;
-        }
-        res=x*p - y*q + z;
-        return res;
-    }
-    void update(int i,int j,int k,int l,int v){
-        update(i,j,v); update(k+1,j,-v);
-        update(k+1,l+1,v); update(i,l+1,-v);
-    }
-    int query(int i,int j,int k,int l){
-        if(i>k||j>l) return 0;
-        int res=query(k,l)-query(i-1,l);
-        res+=query(i-1,j-1)-query(k,j-1);
-        return res;
-    }
+/**
+ * 2D Fenwick Tree implementation.
+ * Note that all cell locations are zero-indexed
+ * in this implementation.
+ * declare BIT2D<int>bit(n,m);
+ */
+template <typename T> class BIT2D {
+  private:
+	const int n, m;
+	vector<vector<T>> bit;
+
+  public:
+	BIT2D(int n, int m) : n(n), m(m), bit(n + 1, vector<T>(m + 1)) {}
+
+	/** adds val to the point (r, c) */
+	void add(int r, int c, T val) {
+		r++, c++;
+		for (; r <= n; r += r & -r) {
+			for (int i = c; i <= m; i += i & -i) { bit[r][i] += val; }
+		}
+	}
+
+	/** @returns sum of points with row in [0, r] and column in [0, c] */
+	T rect_sum(int r, int c) {
+		r++, c++;
+		T sum = 0;
+		for (; r > 0; r -= r & -r) {
+			for (int i = c; i > 0; i -= i & -i) { sum += bit[r][i]; }
+		}
+		return sum;
+	}
+
+	/** @returns sum of points with row in [r1, r2] and column in [c1, c2] */
+	T rect_sum(int r1, int c1, int r2, int c2) {
+		return rect_sum(r2, c2) - rect_sum(r2, c1 - 1) - rect_sum(r1 - 1, c2) +
+		       rect_sum(r1 - 1, c1 - 1);
+	}
 };
-//might not run in compiler
