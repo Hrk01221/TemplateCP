@@ -1,10 +1,5 @@
 #include<bits/stdc++.h>
 using namespace std;
-#ifndef ONLINE_JUDGE
-#include "debug.hpp"
-#else
-#define debug(x...)
-#endif
 #define int long long
 #define endl "\n"
 #define ff first
@@ -27,3 +22,4 @@ int32_t main() {
         solve(tc);
     return 0;
 }
+
