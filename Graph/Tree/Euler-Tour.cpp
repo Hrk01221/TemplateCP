@@ -1,8 +1,10 @@
-vector<int>st(N+1),ed(N+1);
 int timer = 0;
-void eulerTour(int v,int par){
-    st[v]=timer++;
-    for(auto u:graph[v])
-        if(u!=par)eulerTour(u,v);
-    ed[v] = timer;
-}
+    function<void(int, int)> dfs = [&](int v, int p) {
+        in[v] = ++timer;
+        for (auto it : tree[v]) {
+            if (it == p) continue;
+            dfs(it, v);
+        }
+        out[v] = timer;
+    };
+    dfs(1, 0);
