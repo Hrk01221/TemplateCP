@@ -1,23 +1,48 @@
-template <class T>
-struct Fenwick {//1 based
+struct Fenwick {
     int n;
-    vector<T> bit;
-    Fenwick() : n(0) {}
-    Fenwick(int n_) { init(n_); }
-    void init(int n_) { n = n_; bit.assign(n + 1, T(0)); }
-    // add value 'delta' at position idx
-    void add(int idx, T delta) {
-        for (; idx <= n; idx += idx & -idx) bit[idx] += delta;
+    vector<int> bit;
+
+    Fenwick(int n) {
+        this->n = n;
+        bit.assign(n + 1, 0);
     }
-    // prefix sum [1..idx]
-    T sum_prefix(int idx) const {
-        T res = 0;
-        for (; idx > 0; idx -= idx & -idx) res += bit[idx];
-        return res;
+
+    void add(int idx, int val) {
+        while (idx <= n) {
+            bit[idx] += val;
+            idx += idx & -idx;
+        }
     }
-    // range sum [l..r]
-    T sum(int l, int r) const {
-        if (r < l) return 0;
-        return sum_prefix(r) - sum_prefix(l - 1);
+
+    int sum(int idx) {
+        int s = 0;
+        while (idx > 0) {
+            s += bit[idx];
+            idx -= idx & -idx;
+        }
+        return s;
     }
-};//Fenwick<int>fw(n);
+
+    int kth(int k) {
+        int pos = 0;
+
+        int pw = 1;
+        while (pw <= n) pw <<= 1;
+        pw >>= 1;
+
+        while (pw) {
+            if (pos + pw <= n && bit[pos + pw] < k) {
+                k -= bit[pos + pw];
+                pos += pw;
+            }
+            pw >>= 1;
+        }
+
+        return pos + 1;
+    }
+};
+/*
+    Fenwick fw(n);
+    fw.bit.assign(n + 1, 0);
+    fw.add(x,1);
+*/
